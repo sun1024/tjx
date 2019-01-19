@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html class="iframe-h">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>用户管理</title>
+  <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+</head>
+
+<body>
+<div class="wrap-container clearfix">
+  <div class="column-content-detail">
+    <div class="layui-form" id="table-list">
+      <table class="layui-hide" id="demo" lay-filter="test"></table>
+    </div>
+  </div>
+</div>
+<script src="../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script src="./alert/const.js"></script>
+<script type="text/html" id="toolBar">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal addBtn">
+      添加
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-danger edBtn" id="edit">
+      编辑
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-warm listOrderBtn" id="delete">
+      删除
+    </button>
+  </div>
+</script>
+<script>
+  layui.use(['laypage', 'layer', 'table', 'upload', 'element', 'slider','jquery'], function() {
+    var $ = layui.jquery;
+    var laypage = layui.laypage //分页
+      , layer = layui.layer //弹层
+      , table = layui.table //表格
+      , upload = layui.upload //上传
+      , element = layui.element //元素操作
+      , slider = layui.slider //滑块
+    var cols = [ //表头
+      {type: 'checkbox'}
+      , {title: 'id',align:'center',type:'numbers'}
+      , {field: 'area', title: '所属区域',align:'center',templet:'<span>{{areaOption[d.area]}}</span>'}
+      , {field: 'grid', title: '所属网格',align:'center',templet:'<span>{{gridOption[d.grid]}}</span>'}
+      , {field: 'state', title: '处理状态',align:'center',templet:'#dealState'}
+      , {field: 'created_at', title: '创建时间',align:'center'}
+      , {field: 'emergency_level', title: '事件等级',align:'center',templet:'#dealLevel'}
+      , {field: 'emergency_source', title: '事件来源',align:'center',templet:'<span>{{eventResource[d.emergency_source]}}</span>'}
+      , {field: 'emergency_type', title: '事件类型',align:'center',templet:'<span>{{eventType[d.emergency_type]}}</span>'}
+      , {field: 'from_who_name',title:"发起人",align:'center',templet:'#detail'}
+    ];
+    var addUrl = './alert/add.html';
+    var editUrl = './alert/edit.html';
+
+    function editSuc(layero, index,data){
+      var iframe = window['layui-layer-iframe' + index];
+      var editData = [
+        {0:'id',1:'ID',2:data['id']||''},
+        {0:'title',1:'日志名称',2:data['title']||''},
+        {0:"area",1:{title:'所属区域',option:areaOption}},
+        {0:"grid",1:{title:'网格',option:gridOption}},
+        {0:"emergency_level",1:{
+            'title':'事件等级',
+            'option':['紧急','一般']
+          }},
+        {0:"emergency_source",1:{title:'事件来源',option:eventResource}},
+        {0:"emergency_type",1:{title:'事件类型',option:eventType}},
+        {0:'is_important',1:{title:'是否重要',option:['否','是']},2:''},
+        {0:"content",1:"内容",2:data['content']||''},
+      ]
+      var url =  globalUrl+'Work/emergencyEdit';
+      iframe.getFromParent(editData,url,{postTime:'edit_time'});
+    }
+    function editEnd(){
+      getTable();
+    }
+    function addSuc(layero, index){
+      var iframe = window['layui-layer-iframe' + index];
+      var addData = [
+        {0:'title',1:"标题"},
+        {0:"area",1:{title:'所属区域',option:areaOption}},
+        {0:'grid',1:{title:'网格',option:gridOption}},
+        {0:"content",1:"内容"},
+        {0:"emergency_level",1:{
+            'title':'事件等级',
+            'option':['紧急','一般']
+          }},
+        {0:"emergency_source",1:{title:'事件来源',option:eventResource}},
+        {0:"emergency_type",1:{title:'事件类型',option:eventType}},
+        {0:"is_important",1:{
+            'title':'是否重点事件',
+            'option':['否','是']
+          }},
+        {0:'pic',1:'上传图片'}
+      ]
+      var url =  globalUrl+otherUrl.Work[3][1];
+      iframe.getFromParent(addData,url,"edit_time");
+    }
+    var correspond = {};
+    var editAjaxUrl =  globalUrl+otherUrl.Work[3][3];
+    var detailUrl = './alert/detail.html'
+    var deleteUrl =  globalUrl+otherUrl.Work[3][2];
+    var getTable = function() {
+      AJAX({
+        url: globalUrl+otherUrl.Work[3][0],
+        method: 'POST',
+        success:function(data) {
+          if(data.state==200){
+            correspond = data.data;
+            console.log(correspond)
+            setTable({
+              addUrl:addUrl,
+              editUrl:editUrl,
+              cols:cols,
+              data:data.data,
+              editSuc:editSuc,
+              editEnd:editEnd,
+              addSuc:addSuc,
+              editAjaxUrl:editAjaxUrl,
+              deleteUrl:deleteUrl,
+              detailUrl:detailUrl,
+              dealUrl:'./alert/deal.html',
+              scoreUrl:'./alert/score.html'
+            });
+          }else{
+            layer.msg('错误');
+          }
+        }
+      })
+    }
+    getTable();
+  })
+</script>
+<script id="dealState" type="text/html">
+  {{# if(d.status==0){ }}
+  <span style="color: #ff5542">{{dealStatus[d.status]}}</span>
+  {{# }else if(d.status==1){ }}
+  <span style="color: #ffaf82">{{dealStatus[d.status]}}</span>
+  {{# }else if(d.status==2){ }}
+  <span style="color: #44cb3e">{{dealStatus[d.status]}}</span>
+  {{# }else if(d.status==3){ }}
+  <span style="color: #4c574e">{{dealStatus[d.status]}}</span>
+  {{# } }}
+</script>
+
+<script id="dealLevel" type="text/html">
+  {{# if(d.emergency_level==0){ }}
+  <span style="color: #ff5542">{{eventLevel[d.emergency_level]}}</span>
+  {{# }else if(d.emergency_level==1){ }}
+  <span style="color: #4460cb">{{eventLevel[d.emergency_level]}}</span>
+  {{# } }}
+</script>
+
+<script id="detail" type="text/html">
+  {{# if(d.status!=3){ }}
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-danger deal" convalue="{{d.LAY_INDEX-1}}">
+      处理
+    </button>
+  </div>
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal detail" convalue="{{d.LAY_INDEX-1}}">
+      查看
+    </button>
+  </div>
+  {{# }else{ }}
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal detail" convalue="{{d.LAY_INDEX-1}}">
+      详情查看
+    </button>
+  </div>
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm score" style="background-color: #0f9c00;" convalue="{{d.LAY_INDEX-1}}">
+      评分
+    </button>
+  </div>
+  {{# } }}
+</script>
+</body>
+
+</html>

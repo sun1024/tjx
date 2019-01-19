@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html class="iframe-h">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>用户管理</title>
+  <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+</head>
+
+<body>
+<div class="wrap-container clearfix">
+  <div class="column-content-detail">
+    <div class="layui-form" id="table-list">
+      <table class="layui-hide" id="demo" lay-filter="test"></table>
+    </div>
+  </div>
+</div>
+<script src="../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script src="./alert/const.js"></script>
+<script type="text/html" id="toolBar">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal addBtn">
+      添加
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-danger edBtn" id="edit">
+      编辑
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-warm listOrderBtn" id="delete">
+      删除
+    </button>
+  </div>
+</script>
+<script>
+  layui.use(['laypage', 'layer', 'table', 'upload', 'element', 'slider','jquery'], function() {
+    var $ = layui.jquery;
+    var laypage = layui.laypage //分页
+      , layer = layui.layer //弹层
+      , table = layui.table //表格
+      , upload = layui.upload //上传
+      , element = layui.element //元素操作
+      , slider = layui.slider //滑块
+    var cols = [ //表头
+      {type: 'checkbox'}
+      , {title: 'id',align:'center',type:'numbers'}
+      , {field: 'name', title: '网格名称',align:'center'}
+      , {field: 'area', title: '所属区域',align:'center',templet:'<span>{{areaOption[d.area]}}</span>'}
+      , {field: 'service_area', title: '服务区域',align:'center'}
+      , {field: 'num', title: '数目',align:'center'}
+      , {field: 'state', title: '状态',align:'center',templet:'<span>{{gridStatus[d.state]}}</span>'}
+      , {field: '',title:"操作",align:'center',templet:'#detail'}
+    ];
+    var addUrl = './alert/add.html';
+    var editUrl = './alert/edit.html';
+
+    function editSuc(layero, index,data){
+      var iframe = window['layui-layer-iframe' + index];
+      var editData = [
+        {0:'id',1:'ID',2:data['id']||''},
+        {0:'name',1:"网格名称",2:data['name']||''},
+        // {0:'area',1:"区域",2:data['area']},
+        {0:"area",1:{title:'所属区域',option:areaOption}},
+        {0:'service_area',1:'服务区域',2:data['service_area']||''},
+      ]
+      var url =  globalUrl+'System/gridEdit';
+      iframe.getFromParent(editData,url);
+    }
+    function editEnd(){
+      getTable();
+    }
+    function addSuc(layero, index){
+      var iframe = window['layui-layer-iframe' + index];
+      var addData = [
+        {0:'name',1:"网格名称"},
+        // {0:"area",1:'区域'},
+        {0:"area",1:{title:'所属区域',option:areaOption}},
+        {0:'service_area',1:'服务区域'}
+      ]
+      var url =  globalUrl+'System/gridAdd';
+      iframe.getFromParent(addData,url);
+    }
+    var correspond = {};
+    var editAjaxUrl =  globalUrl+'System/gridEdit';
+    var detailUrl = './alert/detail.html'
+    var deleteUrl =  'http://58.144.34.96:5001/web_manager/public/index.php/index/System/gridDelete';
+    var getTable = function() {
+      AJAX({
+        url: globalUrl+'System/gridList',
+        method: 'POST',
+        success:function(data) {
+          if(data.state==200){
+            correspond = data.data;
+            setTable({
+              addUrl:addUrl,
+              editUrl:editUrl,
+              cols:cols,
+              data:data.data,
+              editSuc:editSuc,
+              editEnd:editEnd,
+              addSuc:addSuc,
+              editAjaxUrl:editAjaxUrl,
+              deleteUrl:deleteUrl,
+              detailUrl:detailUrl
+            });
+          }else{
+            layer.msg('错误');
+          }
+        }
+      })
+    }
+    getTable();
+  })
+</script>
+<script id="type5" type="text/html">
+  {{# if(d.log_type==5){ }}
+  <span style="color: #FF0000">{{logType[d.log_type]}}</span>
+  {{# }else{ }}
+  <span>{{logType[d.log_type]}}</span>
+  {{# } }}
+</script>
+
+<script id="detail" type="text/html">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal detail" convalue="{{d.LAY_INDEX-1}}">
+      查看详情
+    </button>
+  </div>
+</script>
+</body>
+
+</html>

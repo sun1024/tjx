@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="iframe-h">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>用户管理</title>
+  <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+</head>
+
+<body>
+<div class="wrap-container clearfix">
+  <div class="column-content-detail">
+    <div class="layui-form" id="table-list">
+      <table class="layui-hide" id="demo" lay-filter="test"></table>
+    </div>
+  </div>
+</div>
+<script src="../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script src="./alert/const.js"></script>
+<script type="text/html" id="toolBar">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal addBtn">
+      添加
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-danger edBtn" id="edit">
+      编辑
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-warm listOrderBtn" id="delete">
+      删除
+    </button>
+  </div>
+</script>
+<script>
+  layui.use(['laypage', 'layer', 'table', 'upload', 'element', 'slider','jquery'], function() {
+    var $ = layui.jquery;
+    var laypage = layui.laypage //分页
+      , layer = layui.layer //弹层
+      , table = layui.table //表格
+      , upload = layui.upload //上传
+      , element = layui.element //元素操作
+      , slider = layui.slider //滑块
+    var cols = [ //表头
+      {type: 'checkbox'}
+      , {title: 'id',align:'center',type:'numbers'}
+      // , {field: 'icon', title: 'Icon',align:'center'}
+      , {field: 'username', title: '用户名',align:'center'}
+      , {field: 'name', title: '真实姓名',align:'center'}
+      , {field: 'identity', title: '身份',align:'center',templte:'#identity'}
+      , {field: 'area', title: '所属区域',align:'center',templet:'<span>{{areaOption[d.area]}}</span>'}
+      , {field: 'communicate_phone', title: '联系电话',align:'center'}
+      , {field: 'last_login', title: '最近登陆',align:'center'}
+      , {field: 'last_login_ip', title: 'IP地址',align:'center'}
+      , {field: 'user_state', title: '状态',align:'center',templet:'<span>{{userStatus[d.user_state]}}</span>'}
+      , {field: '',title:"操作",align:'center',templet:'#detail',width:'15%'}
+    ];
+    var addUrl = './alert/add.html';
+    var editUrl = './alert/edit.html';
+
+    function editSuc(layero, index,data){
+      var iframe = window['layui-layer-iframe' + index];
+      var editData = [
+        {0:'id',1:'ID',2:data['id']||''},
+        {0:'password',1:"密码",2:data['password']||''},
+        {0:"grid",1:{title:'网格',option:gridOption}||''},
+        {0:'name',1:'姓名',2:data['name']||''},
+        // {0:"area",1:"区域",2:data['area']},
+        {0:"area",1:{title:'所属区域',option:areaOption}||''},
+        {0:"identity",1:"身份",2:data['identity']||''},
+        {0:"office_phone",1:"办公电话",2:data['office_phone']||''},
+        {0:"communicate_phone",1:"联系电话",2:data['communicate_phone']||''},
+        {0:"user_state",1:{
+            'title':'状态',
+            // 'option':['0','1 ']
+            'option':userStatusOption
+          }},
+      ]
+      var url =  globalUrl+'System/userEdit';
+      iframe.getFromParent(editData,url);
+    }
+    function editEnd(){
+      getTable();
+    }
+    function addSuc(layero, index){
+      var iframe = window['layui-layer-iframe' + index];
+      var addData = [
+        {0:'username',1:"用户名"},
+        {0:"password",1:'密码'},
+        {0:'name',1:'真实姓名'},
+        // {0:'area',1:'地区'},
+        {0:"area",1:{title:'所属区域',option:areaOption}},
+        {0:"identity",1:'身份'},
+        {0:"communication_phone",1:"联系电话"},
+        {0:"office_phone",1:"办公电话"},
+        {0:"user_state",1:{title:"用户状态",option:userStatusOption}}
+      ]
+      var url =  globalUrl+otherUrl.User[0];
+      iframe.getFromParent(addData,url);
+    }
+    var correspond = {};
+    var editAjaxUrl =  globalUrl+"System/userEdit";
+    var detailUrl = './alert/detail.html';
+    var deleteUrl =  'http://58.144.34.96:5001/web_manager/public/index.php/index/User/userDelete';
+    var getTable = function() {
+      AJAX({
+        url: globalUrl+otherUrl.System[0],
+        method: 'POST',
+        success:function(data) {
+          if(data.state==200){
+            correspond = data.data;
+            setTable({
+              addUrl:addUrl,
+              editUrl:editUrl,
+              cols:cols,
+              data:data.data,
+              editSuc:editSuc,
+              editEnd:editEnd,
+              addSuc:addSuc,
+              editAjaxUrl:editAjaxUrl,
+              deleteUrl:deleteUrl,
+              detailUrl:detailUrl,
+              editPassword:'password'
+            });
+          }else{
+            layer.msg('错误');
+          }
+        }
+      })
+    }
+    getTable();
+  })
+</script>
+
+<script id="detail" type="text/html">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal detail" convalue="{{d.LAY_INDEX-1}}">
+      查看详情
+    </button>
+    <!--{{# if(d.user_state==0){ }}-->
+    <!--<button class="layui-btn layui-btn-sm layui-btn-normal" style="background-color: red" convalue="{{d.LAY_INDEX-1}}">-->
+      <!--禁用 -->
+    <!--</button>-->
+    <!--{{# }else{ }}-->
+    <!--<button class="layui-btn layui-btn-sm layui-btn-normal startUse" style="background-color: #0f9c00" convalue="{{d.LAY_INDEX-1}}">-->
+      <!--启用-->
+    <!--</button>-->
+    <!--{{# } }}-->
+  </div>
+</script>
+
+</body>
+
+</html>

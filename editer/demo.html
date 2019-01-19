@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+  <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+
+<body>
+
+<br>
+<div class="layui-form-item">
+  <div class="layui-inline">
+    <label class="layui-form-label">所属区域</label>
+    <div class="layui-input-inline">
+      <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="北碚区童家溪镇" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-inline">
+    <label class="layui-form-label">信息类别</label>
+    <div class="layui-input-inline">
+      <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="社区介绍" class="layui-input">
+    </div>
+  </div>
+  <br>
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">编辑人</label>
+      <div class="layui-input-inline">
+        <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="admin" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-inline">
+      <label class="layui-form-label">编辑时间</label>
+      <div class="layui-input-inline">
+        <input type="text" name="date" id="date" lay-verify="date" placeholder="2018-12-12" autocomplete="off"
+               class="layui-input">
+      </div>
+    </div>
+    <br>
+    <form class="layui-form" action="">
+      <div class="layui-form-item">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-block">
+          <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="童家溪镇介绍"
+                 class="layui-input">
+        </div>
+        <br>
+
+        <div id="editor">
+          <h1>北碚区童家溪镇概况</h1>
+          <br><br>
+          <p>
+            童家溪镇位于北碚区南端，地处重庆都市发达经济圈，东临嘉陵江，与北部新区隔江相望，南与沙坪坝区井口镇接壤，西与重庆大学科技园毗邻，北靠北碚风景旅游城市，紧邻主城区，经济地理位置十分优越，是重庆市实施“退二进三”发展战略中承接第二产业的首选接收地，全镇幅员面积22.7平方公里，森林面积9300亩，森林覆盖率35%，辖有建设、同兴2个村，58个农业合作社，2 个居委会。总人口1.78万，其中城镇人口0.74万人，农村劳动力5691人。
+            <br><br>境内有重庆市同兴特色工业园区；有华立药业、银钢集团等科技含量高的骨干企业；有中安翡翠湖、水天花园等高品质生态楼盘和西部一流的红鼎高尔夫球会。
+            童家溪镇始终坚持“以开放促开发，以开发促发展”的战略，积极对外招商引资，使大量外商纷至沓来，形成了以摩托车及其配件、高级房地产开发、建筑建材、食品加工的经济结构。
+
+</p>
+        </div>
+
+        <!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
+        <script type="text/javascript" src="wangEditor.min.js"></script>
+        <script type="text/javascript">
+          var E = window.wangEditor;
+          var editor = new E('#editor');
+          // 或者 var editor = new E( document.getElementById('editor') )
+          editor.create()
+        </script>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-input-block">
+          <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+
+</html>

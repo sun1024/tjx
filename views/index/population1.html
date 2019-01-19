@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="iframe-h">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>用户管理</title>
+  <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+</head>
+
+<body>
+<div class="wrap-container clearfix">
+  <div class="column-content-detail">
+    <div class="layui-form" id="table-list">
+      <table class="layui-hide" id="demo" lay-filter="test"></table>
+    </div>
+  </div>
+</div>
+<script src="../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script src="./alert/const.js"></script>
+<script type="text/html" id="toolBar">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal addBtn">
+      添加
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-danger edBtn" id="edit">
+      编辑
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-warm listOrderBtn" id="delete">
+      删除
+    </button>
+    <button class="layui-btn layui-btn-sm listOrderBtn" style="background-color: #0f9c00" id="exam">
+      审核
+    </button>
+  </div>
+</script>
+<script>
+  layui.use(['laypage', 'layer', 'table', 'upload', 'element', 'slider','jquery'], function() {
+    var $ = layui.jquery;
+    var laypage = layui.laypage //分页
+      , layer = layui.layer //弹层
+      , table = layui.table //表格
+      , upload = layui.upload //上传
+      , element = layui.element //元素操作
+      , slider = layui.slider //滑块
+    var cols = [ //表头
+      {type: 'checkbox'}
+      , {title: 'id',align:'center',type:'numbers'}
+      , {field: 'house_holder', title: '房主',align:'center'}
+      , {field: 'people_number', title: '人数',align:'center'}
+      , {field: 'id_number', title: '身份证号',align:'center'}
+      , {field: 'holder_tel', title: '房主电话',align:'center'}
+      , {field: 'house_site', title: '房主地址',align:'center'}
+      , {field: 'house_audit', title: '状态',align:'center',  templet:'<span>{{otherStatus[d.house_audit]}}</span>'}
+      , {field: '',title:"操作",align:'center',templet:'#detail',width:'20%'}
+    ];
+    var addUrl = './alert/add.html';
+    var editUrl = './alert/edit.html';
+
+    function editSuc(layero, index, data){
+      var iframe = window['layui-layer-iframe' + index];
+      var editData = [
+        {0:'id',                 1:'ID',        2:data['id']||''},
+        // {0:'area',         1:'所属区域',   2:data['area']},
+        {0:"area",1:{title:'所属区域',option:areaOption}},
+        {0:'house_num',         1:'门牌号',   2:data['house_num']||''},
+        {0:'block',         1:'所属楼栋',   2:data['block']||''},
+        {0:'unit',         1:'所属单元',   2:data['unit']||''},
+        {0:'house_area',         1:'房屋面积',   2:data['house_area']||''},
+        {0:"house_status",1:{title:'房屋状态',option:houseStatusOption}},
+        {0:"house_type",1:{title:'房屋户型',option:houseTypeOption}},
+        {0:'edit_house_name',         1:'编辑人',   2:data['edit_house_name']||''},
+        {0:'house_site',         1:'房屋地址',   2:data['house_site']||''},
+        {0:'house_holder',         1:'户主',   2:data['house_holder']||''},
+        {0:'holder_tel',         1:'户主电话',   2:data['holder_tel']||''},
+        {0:'id_number',         1:'身份证号',   2:data['id_number']||''},
+        {0:'people_number',         1:'居住人数',   2:data['people_number']||''},
+        {0:'house_site2',         1:'户籍地址',   2:data['house_site2']||''}
+      ]
+      var url =  'http://58.144.34.96:5001/web_manager/public/index.php/index/Basicdata/editHouse';
+      iframe.getFromParent(editData,url);
+    }
+    function editEnd(){
+      getTable();
+    }
+    function addSuc(layero, index){
+      var iframe = window['layui-layer-iframe' + index];
+      var addData = [
+        // {0:'area',1:"所属区域"},
+        {0:"area",1:{title:'所属区域',option:areaOption}},
+        {0:"house_num",1:'门牌号'},
+        {0:"block",1:'所属楼栋'},
+        {0:"house_area",1:'房屋面积'},
+        {0:"house_status",1:{title:'房屋状态',option:houseStatusOption}},
+        {0:"house_type",1:{title:'房屋户型',option:houseTypeOption}},
+        {0:'unit',1:'所属单元'},
+        {0:"edit_house_name",1:'编辑人'},
+        {0:"house_site",1:'房屋地址'},
+        // 房主信息
+        {0:"house_holder",1:'房主'},
+        {0:"id_number",1:"身份证号"},
+        {0:"people_tel",1:"房主电话"},
+        {0:"holder_number",1:"居住人数"},
+        {0:"house_site2",1:"户籍地址"},
+      ]
+      var url =  'http://58.144.34.96:5001/web_manager/public/index.php/index/Basicdata/addHouse';
+      iframe.getFromParent(addData,url);
+    }
+    var correspond = {};
+    var editAjaxUrl =  'http://58.144.34.96:5001/web_manager/public/index.php/index/Basicdata/editHouse';
+    var detailUrl = './alert/detail.html';
+    var deleteUrl =  'http://58.144.34.96:5001/web_manager/public/index.php/index/Basicdata/deleteHouse';
+    var postFinish = globalUrl+otherUrl.Work[0][3]
+    var getTable = function() {
+      AJAX({
+        url: 'http://58.144.34.96:5001/web_manager/public/index.php/index/Basicdata/getHouseList',
+        method: 'GET',
+        success:function(data) {
+          if(data.state==200){
+            correspond = data.data;
+            setTable({
+              addUrl:addUrl,
+              editUrl:editUrl,
+              cols:cols,
+              data:data.data,
+              editSuc:editSuc,
+              editEnd:editEnd,
+              addSuc:addSuc,
+              editAjaxUrl:editAjaxUrl,
+              deleteUrl:deleteUrl,
+              detailUrl:detailUrl,
+              checkUrl:'http://58.144.34.96:5001/web_manager/public/index.php/index/Basicdata/auditHouse',
+              workFinish:'./familyMember.html',
+              postFinish:postFinish,
+            });
+          }else{
+            layer.msg('错误');
+          }
+        }
+      })
+    }
+    getTable();
+  })
+</script>
+<script id="type5" type="text/html">
+  {{# if(d.log_type==5){ }}
+  <span style="color: #FF0000">{{logType[d.log_type]}}</span>
+  {{# }else{ }}
+  <span>{{logType[d.log_type]}}</span>
+  {{# } }}
+</script>
+
+<script id="detail" type="text/html">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal detail" convalue="{{d.LAY_INDEX-1}}">
+      查看详情
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-normal member" style="background-color: #FF6600" convalue="{{d.LAY_INDEX-1}}">
+      家庭成员
+    </button>
+    {{# if(d.house_audit!=1){ }}
+    <button class="layui-btn layui-btn-sm layui-btn-normal check" style="background-color: red" convalue="{{d.LAY_INDEX-1}}">
+      审核
+    </button>
+    {{# }else{ }}
+    <button class="layui-btn layui-btn-sm layui-btn-normal" style="background-color: #0f9c00" convalue="{{d.LAY_INDEX-1}}">
+      已通过
+    </button>
+    {{# } }}
+  </div>
+</script>
+</body>
+
+</html>

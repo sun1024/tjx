@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>add</title>
+  <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../../../static/admin/css/admin.css"/>
+  <style>
+    #view1,#view2 {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .layui-input-block {
+      margin-top:50px;
+    }
+  </style>
+</head>
+
+<body>
+<div style="margin:50px;">
+  <div class="layui-form-item" style="padding-left: 10px;">
+    <blockquote class="layui-elem-quote" style="border-color:#000;font-size:17px;padding:10px;">人口信息</blockquote>
+    <div id="view1"></div>
+    <blockquote class="layui-elem-quote" style="border-color:#000;font-size:17px;padding:10px;">人口属性信息</blockquote>
+    <div id="view2"></div>
+    <div class="layui-input-block">
+      <button class="layui-btn layui-btn-normal" id="sub">立即提交</button>
+      <button class="layui-btn layui-btn-primary" id="reset">重置</button>
+    </div>
+  </div>
+</div>
+<script src="../../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../static/admin/js/common.js"></script>
+<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script>
+<script src="./const.js"></script>
+<script type="text/html" id="formModle">
+  {{#  layui.each(d, function(index,item){ }}
+    {{# if(sdlrOption.indexOf(d[index][0])!=-1){ }}
+    <div class="sdlr-wrap">
+      <div class="box-left">
+        <p>{{d[index][1].title}}</p>
+      </div>
+      <div class="box-right">
+        <select name="name" class="layui-select" id="{{d[index][0]}}">
+          {{# for(let i in d[index][1].option){ }}
+          <option>{{d[index][1].option[i]}}</option>
+          {{# } }}
+        </select>
+      </div>
+    </div>
+    {{# }else{ }}
+    <div class="sdlr-wrap">
+      <div class="box-left">
+        <p>{{d[index][1]}}</p>
+      </div>
+      <div class="box-right">
+        <input type="text" placeholder="" id="{{d[index][0]}}">
+      </div>
+    </div>
+    {{# } }}
+  {{# }) }}
+</script>
+<script type="text/html" id="checkboxModle">
+  {{#  layui.each(d, function(index,item){ }}
+  <div class="sdlr-wrap">
+    <div class="box-left">
+      <p>{{d[index][1]}}</p>
+    </div>
+    <div class="box-right2">
+      <input type="checkbox" placeholder="" id="{{d[index][0]}}">
+    </div>
+  </div>
+  {{# }) }}
+</script>
+<script>
+  layui.use(['jquery', 'layer', 'upload', 'laytpl','laydate'], function () {
+      var $ = layui.jquery;
+      var laytpl = layui.laytpl;
+      var layer = layui.layer;
+      var laydate = layui.laydate;
+      var getTpl = document.getElementById('formModle').innerHTML;
+      var getTpl2 = document.getElementById('checkboxModle').innerHTML;
+
+      var view = document.getElementById('view1');
+      laytpl(getTpl).render(aaa, function (html) {
+        view.innerHTML = html;
+      });
+
+      var view2= document.getElementById('view2');
+      laytpl(getTpl2).render(bbb, function (html) {
+        view2.innerHTML = html;
+      });
+
+      $('#reset').click(function () {
+        $('input').val('');
+      })
+
+      $('#sub').click(function(){
+        var postJson = {};
+        for(let i in aaa){
+          var index = document.querySelector('#' + aaa[i][0]).selectedIndex;
+          if(sdlrOption.indexOf(aaa[i][0])!=-1){
+            if(dataYesNo.indexOf(aaa[i][0])!=-1 || sdlrIndex.indexOf(aaa[i][0])!=-1){
+              postJson[aaa[i][0]] = index;
+            }else if(sdlrValue.indexOf(aaa[i][0]!=-1)){
+              postJson[aaa[i][0]] = document.querySelectorAll('#'+aaa[i][0]+" option")[index].innerText;
+            }
+          }else{
+            postJson[aaa[i][0]] = $('#' + aaa[i][0]).val();
+          }
+        }
+        for(let i in bbb){
+          if($('#' + bbb[i][0]).is(':checked')){
+            postJson[bbb[i][0]] = 1;
+          }else{
+            postJson[bbb[i][0]] = 0;
+          }
+        }
+        console.log(postJson);
+        AJAX({
+          url:'http://58.144.34.96:5001/web_manager/public/index.php/index/Data/addPeopleData',
+          method:"POST",
+          data: postJson,
+          success:function() {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+          }
+        });
+      })
+
+      if($('#file')){
+        $('#file').change(function(){
+          var src = window.URL.createObjectURL(this.files[0])
+          $('#fileImg').attr('src',src)
+        })
+      }
+    })
+</script>
+</body>
+
+</html>

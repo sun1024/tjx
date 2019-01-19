@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html class="iframe-h">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>用户管理</title>
+  <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+</head>
+
+<body>
+<div class="wrap-container clearfix">
+  <div class="column-content-detail">
+    <div class="layui-form" id="table-list">
+      <table class="layui-hide" id="demo" lay-filter="test"></table>
+    </div>
+  </div>
+</div>
+<script src="../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<!-- <script src="./alert/const.js"></script> -->
+<script type="text/html" id="toolBar">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal addBtn">
+      添加
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-danger edBtn" id="edit">
+      编辑
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-warm listOrderBtn" id="delete">
+      删除
+    </button>
+  </div>
+</script>
+<script>
+  layui.use(['laypage', 'layer', 'table', 'upload', 'element', 'slider','jquery'], function() {
+    var $ = layui.jquery;
+    var laypage = layui.laypage //分页
+      , layer = layui.layer //弹层
+      , table = layui.table //表格
+      , upload = layui.upload //上传
+      , element = layui.element //元素操作
+      , slider = layui.slider //滑块
+    var cols = [ //表头
+      {type: 'checkbox'}
+      , {title: 'id',align:'center',type:'numbers'}
+      , {field: 'code', title: '行政区划代码',align:'center'}
+      , {field: 'name', title: '行政区划名称',align:'center'}
+      , {field: 'spell', title: '行政区简拼',align:'center'}
+      , {field: 'level', title: '所属区域',align:'center'}
+      , {field: 'father_code', title: '联系电话',align:'center'}
+    ];
+    var addUrl = './alert/add.html';
+    var editUrl = './alert/edit.html';
+
+    function editSuc(layero, index){}
+    function editEnd(){
+      getTable();
+    }
+    function addSuc(layero, index){
+      var iframe = window['layui-layer-iframe' + index];
+      var addData = [
+        {0:'name',1:"行政区划名称"},
+        {0:'spell',1:'行政区划简拼'},
+        {0:'code',1:'行政区划代码'},
+        {0:"father_code",1:"父级区划代码"},
+        {0:'area_level',1:'行政区划级别'},
+      ]
+      var url = '';
+      iframe.getFromParent(addData,url);
+    }
+    var correspond = {};
+    var editAjaxUrl =  '';
+    var detailUrl = './alert/detail.html';
+    var deleteUrl =  '';
+    var getTable = function() {
+      AJAX({
+        url: 'http://58.144.34.96:5001/web_manager/public/index.php/index/System/areaManageList',
+        method: 'POST',
+        success:function(data) {
+          if(data.state==200){
+            correspond = data.data;
+            setTable({
+              addUrl:addUrl,
+              editUrl:editUrl,
+              cols:cols,
+              data:data.data,
+              editSuc:editSuc,
+              editEnd:editEnd,
+              addSuc:addSuc,
+              editAjaxUrl:editAjaxUrl,
+              deleteUrl:deleteUrl,
+              detailUrl:detailUrl
+            });
+          }else{
+            layer.msg('错误');
+          }
+        }
+      })
+    }
+    getTable();
+  })
+</script>
+
+</body>
+
+</html>

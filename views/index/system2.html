@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html class="iframe-h">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>用户管理</title>
+  <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+</head>
+
+<body>
+<div class="wrap-container clearfix">
+  <div class="column-content-detail">
+    <div class="layui-form" id="table-list">
+      <table class="layui-hide" id="demo" lay-filter="test"></table>
+    </div>
+  </div>
+</div>
+<script src="../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script src="./alert/const.js"></script>
+<script>
+  layui.use(['laypage', 'layer', 'table', 'upload', 'element', 'slider','jquery'], function() {
+    var $ = layui.jquery;
+    var laypage = layui.laypage //分页
+      , layer = layui.layer //弹层
+      , table = layui.table //表格
+      , upload = layui.upload //上传
+      , element = layui.element //元素操作
+      , slider = layui.slider //滑块
+    var cols = [ //表头
+      {type: 'checkbox'}
+      , {field: 'id', title: 'ID',align:'center'}
+      , {field: 'description', title: '角色名称',align:'center'}
+      , {field: 'power_level', title: '角色级别',align:'center'}
+      , {field: 'edit_user', title: '编辑人',align:'center'}
+      , {field: 'edit_time', title: '编辑时间',align:'center'}
+      , {field: 'comment', title: '备注',align:'center'}
+      , {field: 'num', title: '权限人数',align:'center'}
+    ];
+    var addUrl = './alert/add.html';
+    var editUrl = './alert/edit.html';
+
+    function editSuc(layero, index){}
+    function editEnd(){
+      getTable();
+    }
+    function addSuc(layero, index){
+      var iframe = window['layui-layer-iframe' + index];
+      var addData = [
+        {0:'username',1:"用户名"},
+        {0:"password",1:'密码'},
+        {0:'name',1:'姓名'},
+        {0:'area',1:'地区'},
+        {0:"identity",1:{
+          'title':'角色',
+            'option':['街道居民','网格管理员','boss管理员']
+          }},
+        {0:"communication_phone",1:"联系电话"},
+        {0:"office_phone",1:"办公电话"},
+      ]
+      var url =  '';
+      iframe.getFromParent(addData,url);
+    }
+    var correspond = {};
+    var editAjaxUrl =  '';
+    var detailUrl = './alert/detail.html';
+    var deleteUrl =  globalUrl+otherUrl.Work[2][2];
+    var getTable = function() {
+      AJAX({
+        url: globalUrl+otherUrl.System[2],
+        method: 'POST',
+        success:function(data) {
+          if(data.state==200){
+            correspond = data.data;
+            setTable({
+              addUrl:addUrl,
+              editUrl:editUrl,
+              cols:cols,
+              data:data.data,
+              editSuc:editSuc,
+              editEnd:editEnd,
+              addSuc:addSuc,
+              editAjaxUrl:editAjaxUrl,
+              deleteUrl:deleteUrl,
+              detailUrl:detailUrl
+            });
+          }else{
+            layer.msg('错误');
+          }
+        }
+      })
+    }
+    getTable();
+  })
+</script>
+
+<script id="detail" type="text/html">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal detail" convalue="{{d.LAY_INDEX-1}}">
+      查看详情
+    </button>
+    {{# if(true){ }}
+    <button class="layui-btn layui-btn-sm layui-btn-normal" style="background-color: red" convalue="{{d.LAY_INDEX-1}}">
+      禁用 
+    </button>
+    {{# }else{ }}
+    <button class="layui-btn layui-btn-sm layui-btn-normal" style="background-color: #0f9c00" convalue="{{d.LAY_INDEX-1}}">
+      启用
+    </button>
+    {{# } }}
+  </div>
+</script>
+</body>
+
+</html>

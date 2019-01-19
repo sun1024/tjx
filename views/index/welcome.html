@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>网站后台管理模版</title>
+  <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../../static/admin/css/admin.css"/>
+  <script src="../../static/admin/lib/echarts/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>
+<div class="welcome-container">
+  <div class="welcome-upper">
+    <!--<div class="welcome-upper-left">-->
+      <!--<hr>-->
+      <!--<div>-->
+        <!--<p class="layui-icon picon picon1" style="color:#f5961f;">&#xe756;</p>-->
+        <!--<p class="ptip">预警提示 <span class="layui-badge layui-bg-cyan">1</span></p>-->
+      <!--</div>-->
+      <!--<hr>-->
+      <!--<div>-->
+        <!--<p class="layui-icon picon picon2" style="color:#6da3ea;">&#xe667;</p>-->
+        <!--<p class="ptip">-->
+          <!--事件处理-->
+          <!--<span class="layui-badge layui-bg-cyan">1</span></p>-->
+      <!--</div>-->
+      <!--<hr>-->
+      <!--<div>-->
+        <!--<p class="layui-icon picon picon3" style="color:#74dc27;">&#xe60e;</p>-->
+        <!--<p class="ptip">请假申请 <span class="layui-badge layui-bg-cyan">1</span></p>-->
+      <!--</div>-->
+      <!--<hr>-->
+      <!--<div>-->
+        <!--<p class="layui-icon picon picon4" style="color:#f56551;">&#xe715;</p>-->
+        <!--<p class="ptip">考勤打卡 <span class="layui-badge layui-bg-cyan">1</span></p>-->
+      <!--</div>-->
+      <!--<hr>-->
+    <!--</div>-->
+    <div class="welcome-upper-right">
+      <div class="layui-collapse">
+        <div class="layui-colla-item">
+          <h2 class="welcome-upper-center-h2">人员统计
+            <!--<button class="layui-btn layui-btn-sm layui-btn-normal">-->
+              <!--导入-->
+              <!--<input type="file" id="xlsx" style="position:absolute;width:100%;left:0;opacity:0;">-->
+            <!--</button>-->
+          </h2>
+          <div class="welcome-colla-content">
+            <div class="content-left">
+              <p class="content-left-active">年龄统计</p>
+              <p>常驻情况</p>
+              <p>性别统计</p>
+              <p>政治面貌</p>
+              <p>低保人员数</p>
+              <p>租房人口</p>
+              <p>民族统计</p>
+              <p>重点关注人群</p>
+            </div>
+            <div class="content-right" id="boxEcharts"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="welcome-center">
+      <div class="layui-collapse">
+        <div class="layui-colla-item">
+          <h2 class="welcome-upper-center-h2">通讯录</h2>
+          <div class="welcome-colla-content">
+            <table class="layui-hide" id="txl"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- <div class="welcome-lower">
+    <div class="layui-collapse">
+      <div class="layui-colla-item">
+        <h2 class="welcome-upper-center-h2">事件统计</h2>
+        <div class="welcome-echarts">
+          <div id="b1"></div>
+          <div id="b2"></div>
+          <div id="b3"></div>
+          <div id="b4"></div>
+          <div id="b5"></div>
+          <div id="b6"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<script src="../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../static/admin/lib/xlsx/xlsx.core.min.js"></script>
+<script src="../../static/admin/lib/echarts/echarts.js"></script>
+<script type="text/javascript">
+  layui.use(['layer', 'jquery', 'table'], function () {
+    var layer = layui.layer;
+    var $ = layui.jquery;
+    var table = layui.table;
+    //图表
+    var myChart;
+    var chartData = [];
+
+    function requireEchart(option) {
+      require.config({
+        paths: {
+          echarts: '../../static/admin/lib/echarts'
+        }
+      });
+      require(
+        [
+          'echarts',
+          'echarts/chart/bar'
+        ],
+        function (ec) {
+          var circle = ec.init(document.getElementById('boxEcharts'), 'light');
+          var option3 = setOption(option);
+          circle.setOption(option3);
+        }
+      );
+    }
+
+    function setOption(option) {
+      var xAxisData = [];
+      var seriesData = [];
+      for (let i in option) {
+        if(i!='总人数'){
+          xAxisData.push(i);
+          seriesData.push(option[i]);
+        }
+      }
+      var option3 = {
+        backgroundColor: 'rgba(0,0,0,0)',
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        grid: {
+          x:'10%',
+          y:'10%',
+          x2:'5%',
+          y2:'8%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: xAxisData,
+          axisTick: {
+            alignWithLabel: true
+          }
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [{
+          data: seriesData,
+          type: 'bar'
+        }]
+      };
+      return option3;
+    }
+
+    var addurl = ['getAgeStat','getPopStat','getSexStat','getPoliticalStat','getPoorStat','getRentHouseStat','getEthnicityStat','getKeyAttnStat'];
+    AJAX({
+      url:'http://58.144.34.96:5001/web_manager/public/index.php/index/Data/'+addurl[0],
+      method:'GET',
+      success:function(data){
+        requireEchart(data.data[0]);
+      }
+    })
+    var contentP = document.querySelectorAll('.content-left>p');
+    for (let i = 0; i < contentP.length; i++) {
+      contentP[i].onclick = function () {
+        AJAX({
+          url:'http://58.144.34.96:5001/web_manager/public/index.php/index/Data/'+addurl[i],
+          method:'GET',
+          success:function(data){
+            console.log(data);
+            requireEchart(data.data[0]);
+          }
+        })
+        $(".content-left>p").removeClass('content-left-active');
+        $(this).addClass('content-left-active');
+      }
+    }
+
+    //
+    // document.getElementById('xlsx').onchange = function () {
+    //   ConvertToArray();
+    // }
+
+    function ConvertToArray() {
+      var reader = new FileReader();
+      reader.readAsBinaryString(document.getElementById("xlsx").files[0]);
+      reader.onloadend = function (evt) {
+        if (evt.target.readyState == FileReader.DONE) {
+          var data = reader.result;
+          var workbook = XLSX.read(data, {type: 'binary'});
+        }
+        var sheet_name_list = workbook.SheetNames;
+        var result = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+        var resultX = echartExcel(result);
+        chartData = resultX;
+        setP(resultX);
+        requireEchart(0);
+        var contentP = document.querySelectorAll('.content-left>p');
+        for (let i = 0; i < contentP.length; i++) {
+          contentP[i].onclick = function () {
+            $(".content-left>p").removeClass('content-left-active');
+            $(this).addClass('content-left-active');
+            requireEchart(i);
+          }
+        }
+      }
+    }
+
+    function setP(result) {
+      $('.content-left').empty();
+      for (let i in result) {
+        if (i == 0) {
+          $('.content-left').append("<p class='content-left-active'>" + result[i].title + "</p>");
+        } else {
+          $('.content-left').append("<p>" + result[i].title + "</p>");
+        }
+      }
+    }
+  });
+</script>
+<script>
+  layui.use(['jquery', 'element', 'layer','table'], function () {
+    var $ = layui.jquery;
+    var table = layui.table;
+    AJAX({
+      url:'http://58.144.34.96:5001/web_manager/public/index.php/index/System/gridAdminList',
+      method:'GET',
+      success:function(data){
+        var xData = data.data;
+        table.render({
+          elem: '#txl'
+          // ,url:'/demo/table/user/'
+          ,data:xData
+          ,height:'370px'
+          ,page: {
+          layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
+          , groups: 1
+          , first: false
+          , last: false
+      }
+      ,cellMinWidth: 80
+      ,cols: [[
+        {field:'id', title: 'ID', sort: true}
+        ,{field:'name', title: '姓名'}
+        ,{field:'server_area', title: '服务范围'}
+        ,{field:'communication_phone', title: '电话'}
+        // ,{field:'wealth', title: '一键呼叫'}
+      ]]
+    });
+      }
+    })
+
+  })
+</script>
+<script>
+  layui.use(['jquery'],function(){
+    var $ = layui.jquery;
+    AJAX({
+      url:'http://58.144.34.96:5001/web_manager/public/index.php/index/Data/getAgeStat',
+      method:'GET',
+      success:function(data){
+        var xAxisData = [];
+        var seriesData = [];
+        for (let i in data.data[0]) {
+          if(i!='总人数'){
+            xAxisData.push(i);
+            seriesData.push(data.data[0][i]);
+          }
+        }
+        ssr1({
+          el:'#b1',
+          title:'年龄统计',
+          xAxisData:xAxisData,
+          seriesData:seriesData
+        });
+      }
+    })
+
+    AJAX({
+      url:'http://58.144.34.96:5001/web_manager/public/index.php/index/Data/getPopStat',
+      method:'GET',
+      success:function(data){
+        var xAxisData = [];
+        var seriesData = [];
+        for (let i in data.data[0]) {
+          if(i!='总人数'){
+            xAxisData.push(i);
+            seriesData.push(data.data[0][i]);
+          }
+        }
+        ssr1({
+          el:'#b2',
+          title:'常驻情况',
+          xAxisData:xAxisData,
+          seriesData:seriesData
+        });
+      }
+    })
+
+    // ssr2({
+    //   el:'#b2',
+    //   color:'#ddd'
+    // });
+    ssr3("#b3",['a']);
+    ssr7('#b4',['a']);
+    ssr1({el:'#b5',
+      xAxisData:['0-17', '18-40', '41-60', '61-70', '71-80', '81-90', '91-100'],
+      seriesData:[23,12,13,45,34,34,76]});
+    ssr2({
+      el:'#b6',
+      color:'#ddd'
+    });
+  })
+</script>
+</body>
+
+</html>

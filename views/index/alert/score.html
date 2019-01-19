@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>score</title>
+  <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../../../static/admin/css/admin.css"/>
+  <style>
+    .box {
+      width:300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 40px auto 0 auto;
+    }
+    #score i{
+      font-size:30px;
+    }
+    #sure {
+      margin-top:20px;
+    }
+  </style>
+</head>
+<body>
+<div class="box">
+  <div id="score"></div>
+  <div class="sdlr-wrap" style="margin-top:30px;">
+    <div class="box-left">
+      <p>备注:</p>
+    </div>
+    <div class="box-right">
+      <input type="text" placeholder="" value="">
+    </div>
+  </div>
+  <button class="layui-btn layui-btn-sm" style="display: block;" id="sure">确定</button>
+</div>
+
+<script src="../../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../static/admin/js/common.js"></script>
+<script src="./const.js"></script>
+<script>
+function getFromParent(data){
+  layui.use(['rate','layer','jquery'],function(){
+    var rate = layui.rate;
+    var $ = layui.jquery;
+    var layer = layui.layer;
+    rate.render({
+      elem: '#score',
+      length:4
+      //value:''
+    });
+
+    document.getElementById('sure').onclick = function(){
+      var num = document.querySelectorAll('.layui-inline .layui-icon-rate-solid').length;
+      var score_content = document.querySelector('.box-right input').value;
+      AJAX({
+        url:'http://58.144.34.96:5001/web_manager/public/index.php/index/Work/emergencyScore',
+        method:"POST",
+        data:{
+          id:data.id,
+          score:num,
+          score_content:score_content
+        },
+        success(){
+          layer.msg('评分成功');
+          var index = parent.layer.getFrameIndex(window.name);
+          parent.layer.close(index);
+        },
+        error(){
+          layer.msg('错误');
+          var index = parent.layer.getFrameIndex(window.name);
+          parent.layer.close(index);
+        }
+      });
+    }
+  })
+}
+</script>
+</body>
+</html>

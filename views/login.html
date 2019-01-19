@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>logon</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+  <style>
+    * {
+      letter-spacing: 1px;
+    }
+    .layui-col-md3,.layui-col-md9 {
+      height:100vh;
+    }
+    @media (max-width: 750px) {
+      .layui-col-md3 {
+        display: none;
+      }
+      .aaa {
+        padding-top:0;
+      }
+    }
+    .input-wrap {
+      width:45%;
+      margin:25px auto 0 auto;
+    }
+    .logon-input {
+      outline: none;
+      width:70%;
+      height:35px;
+      border-radius:6px;
+      border:1px solid rgba(149,188,157,0.4);
+      padding:0 10px;
+      transition:0.5s all;
+    }
+    .logon-input:hover {
+      box-shadow: 0 0 3px rgba(149,188,157,0.6);
+    }
+    .logon-input:focus {
+      box-shadow: 0 0 3px rgba(149,188,157,0.6);
+    }
+    .f-left {
+      background-color: #323231;
+    }
+    .f-right {
+      padding-top:20vh;
+      background-color: #f7f6f0;
+    }
+    .formX {
+      width:80%;
+      margin:0 auto;
+    }
+    .formX>button {
+      display: block;
+      margin:25px auto 0 auto;
+    }
+    .formX h1 {
+      font-size:45px;
+      margin-bottom: 20vh;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div>
+  <div class="layui-row">
+    <div class="layui-col-md3 layui-col-sm3 layui-col-xs1 f-left"></div>
+    <div class="layui-col-md9 layui-col-sm9 layui-col-xs12 f-right">
+      <div class="formX">
+        <h1>后台管理系统</h1>
+        <p class="input-wrap">
+          账号
+          <input type="text" class="logon-input" id="username" placeholder="请输入账号">
+        </p>
+        <p class="input-wrap">
+          密码
+          <input type="password" class="logon-input" id="password" placeholder="请输入密码">
+        </p>
+        <button class="layui-btn" id="btn">登录</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/admin/js/common.js"></script>
+<script>
+  layui.use(['jquery','layer'],function(){
+    var $ = layui.jquery;
+
+    document.getElementById('btn').onclick = function(){
+      var username = document.getElementById('username').value;
+      var password = document.getElementById('password').value;
+      if(username === '') {
+        layer.msg('请输入账号');
+      }else if(password === ''){
+        layer.msg('请输入密码');
+      }else {
+        $.ajax({
+          url:'http://58.144.34.96:5001/web_manager/public/index.php/index/User/login',
+          method:'POST',
+          data:{
+            username:username,
+            password:password
+          },
+          success(data){
+            console.log(data);
+            var _data = data.data;
+            if(data.state==200){
+              setCookie('Authorization',_data.token,3600*2);
+              window.location.href='index.html';
+            }
+          },
+          error(){
+            layer.msg('错误');
+          }
+        })
+      }
+    };
+  })
+</script>
+</body>
+</html>

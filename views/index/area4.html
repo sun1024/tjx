@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html class="iframe-h">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>用户管理</title>
+  <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+</head>
+
+<body>
+<div class="wrap-container clearfix">
+  <div class="column-content-detail">
+    <div class="layui-form" id="table-list">
+      <table class="layui-hide" id="demo" lay-filter="test"></table>
+    </div>
+  </div>
+</div>
+<script src="../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script src="./alert/const.js"></script>
+<script type="text/html" id="toolBar">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal addBtn">
+      添加
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-danger edBtn" id="edit">
+      编辑
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-warm listOrderBtn" id="delete">
+      删除
+    </button>
+  </div>
+</script>
+<script>
+  layui.use(['laypage', 'layer', 'table', 'upload', 'element', 'slider','jquery'], function() {
+    var $ = layui.jquery;
+    var laypage = layui.laypage //分页
+      , layer = layui.layer //弹层
+      , table = layui.table //表格
+      , upload = layui.upload //上传
+      , element = layui.element //元素操作
+      , slider = layui.slider //滑块
+    var cols = [ //表头
+      {type: 'checkbox'}
+      , {title: 'id',align:'center',type:'numbers'}
+      , {field: 'name', title: '姓名',align:'center'}
+      , {field: 'grid', title: '所属网格',align:'center',templet:'<span>{{gridOption[d.grid]}}</span>'}
+      , {field: 'id_card', title: '身份证',align:'center'}
+      , {field: 'sex', title: '性别',align:'center',templet:'<span>{{sexIndex[d.sex]}}</span>'}
+      , {field: 'age', title: '年龄',align:'center'}
+      , {field: 'communication_phone', title: '办公电话',align:'center'}
+      , {field: 'server_area', title: '服务区域',align:'center'}
+      , {field: '',title:"操作",align:'center',templet:'#detail',width:'20%'}
+    ];
+    var addUrl = './alert/add.html';
+    var editUrl = './alert/edit.html';
+
+    function editSuc(layero, index,data){
+      var iframe = window['layui-layer-iframe' + index];
+      var editData = [
+        {0:'id',1:'ID',2:data['id']||''},
+        {0:"name",1:"姓名",2:data['name']||''},
+        {0:"age",1:"年龄",2:data['age']||''},
+        {0:"grid",1:{title:'网格',option:gridOption}},
+        {0:'id_card',1:'身份证',2:data['id_card']||''},
+        {0:"sex",1:{
+            'title':'性别',
+            'option':['男','女 ']
+          }},
+        {0:"communication_phone",1:"联系电话",2:data['communication_phone']||''},
+        {0:"server_area",1:"服务区域",2:data['server_area']||''},
+        // {0:"pic",1:"图片",2:data['icon']}
+      ]
+      var url =  globalUrl+'System/gridAdminEdit';
+      iframe.getFromParent(editData,url);
+    }
+
+    function editAppSuc(layero, index,data){
+      var iframe = window['layui-layer-iframe' + index];
+      var editData = [
+        {0:'id',1:'ID',2:data['id']||''},
+        {0:"area",1:{title:'区域',option:areaOption}},
+        {0:"grid",1:{title:'网格',option:gridOption}},
+        {0:'name',1:'姓名',2:data['name']||''},
+        {0:'password',1:"密码",2:data['password']||''},
+        {0:"identity",1:"身份",2:data['identity']||''},
+        {0:"office_phone",1:"办公电话",2:data['office_phone']||''},
+        {0:"communicate_phone",1:"联系电话",2:data['communicate_phone']||''},
+        {0:"user_state",1:{
+            'title':'状态',
+            'option':userStatus
+          }},
+      ]
+      var url =  globalUrl+'System/userEdit';
+      iframe.getFromParent(editData,url);
+    }
+    function editEnd(){
+      getTable();
+    }
+    function addSuc(layero, index){
+      var iframe = window['layui-layer-iframe' + index];
+      var addData = [
+        {0:'name',1:"姓名"},
+        {0:"grid",1:{title:'网格',option:gridOption}},
+        {0:'id_card',1:'身份证'},
+        {0:"communication_phone",1:"办公电话"},
+        {0:"sex",1:{
+            'title':'性别',
+            'option':['男','女 ']
+          }},
+        {0:"age",1:"年龄"},
+        {0:"server_area",1:"服务区域"},
+        // {0:"pic",1:"图片"}
+      ]
+      var url =  globalUrl+'System/gridAdminAdd';
+      iframe.getFromParent(addData,url);
+    }
+    var correspond = {};
+    var editAjaxUrl =  globalUrl+'System/gridAdminEdit';
+    var detailUrl = './alert/detail.html'
+    var deleteUrl =  globalUrl+'System/gridAdminDelete';
+    var getTable = function() {
+      AJAX({
+        url: globalUrl+'System/gridAdminList',
+        method: 'POST',
+        success:function(data) {
+          if(data.state==200){
+            correspond = data.data;
+            setTable({
+              addUrl:addUrl,
+              editUrl:editUrl,
+              cols:cols,
+              data:data.data,
+              editSuc:editSuc,
+              editEnd:editEnd,
+              addSuc:addSuc,
+              editAjaxUrl:editAjaxUrl,
+              deleteUrl:deleteUrl,
+              detailUrl:detailUrl,
+              editAppSuc:editAppSuc
+            });
+          }else{
+            layer.msg('错误');
+          }
+        }
+      })
+    }
+    getTable();
+  })
+</script>
+<script id="type5" type="text/html">
+  {{# if(d.log_type==5){ }}
+  <span style="color: #FF0000">{{logType[d.log_type]}}</span>
+  {{# }else{ }}
+  <span>{{logType[d.log_type]}}</span>
+  {{# } }}
+</script>
+
+<script id="detail" type="text/html">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-warm editapp" convalue="{{d.LAY_INDEX-1}}">
+      编辑app账号
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-normal detail" convalue="{{d.LAY_INDEX-1}}">
+      查看详情
+    </button>
+  </div>
+</script>
+</body>
+
+</html>
