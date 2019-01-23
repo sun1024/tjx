@@ -92,9 +92,8 @@
         </div>
       </div>
     </div>
-  </div>
-</div> -->
-
+  </div> -->
+</div>
 <script src="../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../static/admin/lib/xlsx/xlsx.core.min.js"></script>
@@ -269,66 +268,66 @@
 
   })
 </script>
-<script>
-  layui.use(['jquery'],function(){
-    var $ = layui.jquery;
-    AJAX({
-      url:'http://58.144.34.96:5001/web_manager/public/index.php/index/Data/getAgeStat',
-      method:'GET',
-      success:function(data){
-        var xAxisData = [];
-        var seriesData = [];
-        for (let i in data.data[0]) {
-          if(i!='总人数'){
-            xAxisData.push(i);
-            seriesData.push(data.data[0][i]);
-          }
-        }
-        ssr1({
-          el:'#b1',
-          title:'年龄统计',
-          xAxisData:xAxisData,
-          seriesData:seriesData
-        });
-      }
-    })
+<!--<script>-->
+  <!--layui.use(['jquery'],function(){-->
+    <!--var $ = layui.jquery;-->
+    <!--AJAX({-->
+      <!--url:'http://58.144.34.96:5001/web_manager/public/index.php/index/Data/getAgeStat',-->
+      <!--method:'GET',-->
+      <!--success:function(data){-->
+        <!--var xAxisData = [];-->
+        <!--var seriesData = [];-->
+        <!--for (let i in data.data[0]) {-->
+          <!--if(i!='总人数'){-->
+            <!--xAxisData.push(i);-->
+            <!--seriesData.push(data.data[0][i]);-->
+          <!--}-->
+        <!--}-->
+        <!--ssr1({-->
+          <!--el:'#b1',-->
+          <!--title:'年龄统计',-->
+          <!--xAxisData:xAxisData,-->
+          <!--seriesData:seriesData-->
+        <!--});-->
+      <!--}-->
+    <!--})-->
 
-    AJAX({
-      url:'http://58.144.34.96:5001/web_manager/public/index.php/index/Data/getPopStat',
-      method:'GET',
-      success:function(data){
-        var xAxisData = [];
-        var seriesData = [];
-        for (let i in data.data[0]) {
-          if(i!='总人数'){
-            xAxisData.push(i);
-            seriesData.push(data.data[0][i]);
-          }
-        }
-        ssr1({
-          el:'#b2',
-          title:'常驻情况',
-          xAxisData:xAxisData,
-          seriesData:seriesData
-        });
-      }
-    })
+    <!--AJAX({-->
+      <!--url:'http://58.144.34.96:5001/web_manager/public/index.php/index/Data/getPopStat',-->
+      <!--method:'GET',-->
+      <!--success:function(data){-->
+        <!--var xAxisData = [];-->
+        <!--var seriesData = [];-->
+        <!--for (let i in data.data[0]) {-->
+          <!--if(i!='总人数'){-->
+            <!--xAxisData.push(i);-->
+            <!--seriesData.push(data.data[0][i]);-->
+          <!--}-->
+        <!--}-->
+        <!--ssr1({-->
+          <!--el:'#b2',-->
+          <!--title:'常驻情况',-->
+          <!--xAxisData:xAxisData,-->
+          <!--seriesData:seriesData-->
+        <!--});-->
+      <!--}-->
+    <!--})-->
 
-    // ssr2({
-    //   el:'#b2',
-    //   color:'#ddd'
-    // });
-    ssr3("#b3",['a']);
-    ssr7('#b4',['a']);
-    ssr1({el:'#b5',
-      xAxisData:['0-17', '18-40', '41-60', '61-70', '71-80', '81-90', '91-100'],
-      seriesData:[23,12,13,45,34,34,76]});
-    ssr2({
-      el:'#b6',
-      color:'#ddd'
-    });
-  })
-</script>
+    <!--// ssr2({-->
+    <!--//   el:'#b2',-->
+    <!--//   color:'#ddd'-->
+    <!--// });-->
+    <!--ssr3("#b3",['a']);-->
+    <!--ssr7('#b4',['a']);-->
+    <!--ssr1({el:'#b5',-->
+      <!--xAxisData:['0-17', '18-40', '41-60', '61-70', '71-80', '81-90', '91-100'],-->
+      <!--seriesData:[23,12,13,45,34,34,76]});-->
+    <!--ssr2({-->
+      <!--el:'#b6',-->
+      <!--color:'#ddd'-->
+    <!--});-->
+  <!--})-->
+<!--</script>-->
 </body>
 
 </html>

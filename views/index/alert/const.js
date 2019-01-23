@@ -475,3 +475,6 @@ const is_not = {
   0:'否',
   1:'是'
 }
+
+const detailArr =  ['is_single_old','mental_disease','is_correctional','is_released','is_xj','is_xd','is_special_care','is_disabled','is_leftover_children',
+  'has_critical_disease', 'is_empty_nester', 'is_poor', 'is_veteran', 'is_single_parent', 'is_jobless', 'is_sanwu', 'is_dibao', 'is_overseas_student', 'is_overseas_chinese', 'is_cflac_member', 'is_ftu_member'];

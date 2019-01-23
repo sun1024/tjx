@@ -48,10 +48,15 @@
     <table>
   {{# for(let i in d[0]){ }}
     {{# if(ys[i]!=undefined){ }}
+      {{# if(detailArr.indexOf(i)!=-1 && d[0][i]!=1){continue;} }}
       <tr class="wrap">
         <th class="left">{{ys[i]}}</th>
         {{# if(i=='level'){ }}
         <th class="right">{{level[d[0][i]]}}</th>
+        {{# }else if(detailArr.indexOf(i)!=-1){ }}
+          {{# if(d[0][i]==1){ }}
+          <th class="right">&#8730;</th>
+          {{# } }}
         {{# }else if(i=='status'){ }}
         <th class="right">
           {{# if(dealStatus[d[0][i]]!=undefined){ }}

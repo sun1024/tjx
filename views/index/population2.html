@@ -9,6 +9,7 @@
   <title>用户管理</title>
   <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
   <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../../static/admin/css/admin.css"/>
 </head>
 
 <body>
@@ -33,9 +34,10 @@
     <button class="layui-btn layui-btn-sm layui-btn-warm listOrderBtn" id="delete">
       删除
     </button>
-    <!-- <button class="layui-btn layui-btn-sm listOrderBtn" style="background-color: #0f9c00" id="exam">
-      审核
-    </button> -->
+    <div class="population_search">
+      <input type="text" placeholder="" id="search_input">
+      <button class="layui-btn layui-btn-sm layui-btn-normal listOrderBtn" id="search">查询</button>
+    </div>
   </div>
 </script>
 <script>

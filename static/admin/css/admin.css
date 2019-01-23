@@ -2204,9 +2204,27 @@
 }
 
 .layui-form-item .layui-form-label {
-  padding: 9px 0px;
+  padding: 9px 0;
   text-align: center;
 }
 #LAY_app .layui-side-menu .layui-nav {
   margin-top:10px;
+}
+
+.population_search {
+  display: inline;
+  margin-left:30px;
+}
+.population_search input{
+  padding:5px;
+  width:200px;
+  border:1px solid #c1c0bd;
+  border-radius:3px;
+  transition:0.3s all;
+  background-color: transparent;
+  font-size:14px;
+  color:#666;
+}
+.population_search input:hover,.population_search input:focus {
+  border:1px solid #9a9997;
 }
