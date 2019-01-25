@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html class="iframe-h">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>用户管理</title>
+  <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+</head>
+<script type="text/html" id="toolBar">
+  <div class="layui-inline tool-btn">
+    <!-- <button class="layui-btn layui-btn-sm layui-btn-normal addBtn">
+      添加
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-danger edBtn" id="edit">
+      编辑
+    </button>
+    <button class="layui-btn layui-btn-sm layui-btn-warm listOrderBtn" id="delete">
+      删除
+    </button>
+    <button class="layui-btn layui-btn-sm listOrderBtn" style="background-color: #0f9c00" id="exam">
+      审核
+    </button> -->
+  </div>
+</script>
+<body>
+<div class="wrap-container clearfix">
+  <div class="column-content-detail">
+    <div class="layui-form" id="table-list">
+      <table class="layui-hide" id="demo" lay-filter="test"></table>
+    </div>
+  </div>
+</div>
+<script src="../../../layuiadmin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script src="./const.js"></script>
+
+<script>
+  function getFromParent(data,obj) {
+    layui.use(['laypage', 'layer', 'table', 'upload', 'element', 'slider', 'jquery'], function () {
+      var $ = layui.jquery;
+      var laypage = layui.laypage //分页
+        , layer = layui.layer //弹层
+        , table = layui.table //表格
+        , upload = layui.upload //上传
+        , element = layui.element //元素操作
+        , slider = layui.slider //滑块
+      var cols = obj.cols;
+
+      var correspond = {};
+      var tableData = [];
+      for(let i in data.data){
+        tableData.push(data.data[i]);
+      }
+      var detailUrl = './detail.html';
+      var getTable = function () {
+        setTable({
+          cols: cols,
+          data: tableData,
+          detailUrl: detailUrl,
+          detailSpecial:true,
+          dataX:data.data
+        })
+      }
+      getTable();
+    })
+  }
+</script>
+<script id="type5" type="text/html">
+  {{# if(d.log_type==5){ }}
+  <span style="color: #FF0000">{{logType[d.log_type]}}</span>
+  {{# }else{ }}
+  <span>{{logType[d.log_type]}}</span>
+  {{# } }}
+</script>
+
+<script id="detail" type="text/html">
+  <div class="layui-inline tool-btn">
+    <button class="layui-btn layui-btn-sm layui-btn-normal detail" convalue="{{d.LAY_INDEX-1}}">
+      查看详情
+    </button>
+  </div>
+</script>
+</body>
+
+</html>

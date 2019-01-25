@@ -1955,7 +1955,8 @@
 /***********welcome***********/
 .welcome-upper-left {
   display:flex;
-  flex-direction: column;
+  /*flex-direction: column;*/
+  justify-content:space-between;
 }
 .welcome-upper-left>div {
   width:100px;
@@ -2002,7 +2003,7 @@
   overflow: hidden;
 }
 .welcome-center {
-  width:40%;
+  width:45%;
   max-height:400px;
 }
 .welcome-echarts {
@@ -2113,7 +2114,7 @@
   height:365px;
 }
 .welcome-upper-right {
-  width:45%;
+  width:50%;
 }
 .welcome-colla-content {
   display:flex;

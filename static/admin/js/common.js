@@ -219,7 +219,29 @@ function setTable(obj) {
 
     $('#search').click(function(){
       let value = document.getElementById('search_input').value;
-      searchClickFunc(value);
+      AJAX({
+        url:'http://58.144.34.96:5001/web_manager/public/index.php/index/Data/searchPeopleByName ',
+        method:'POST',
+        data:{
+          username:value
+        },
+        success:function(data) {
+          if (data.state == 200) {
+            layer.open({
+              type: 2,
+              title: '搜索结果',
+              area: ['900px', '550px'],
+              content: obj.alertTab,
+              maxmin: true,
+              success: function (layero, index) {
+                var iframe = window['layui-layer-iframe' + index];
+                iframe.getFromParent(data, obj);
+              }
+            })
+          }
+        }
+      })
+      // searchClickFunc(value);
     });
 
     function searchClickFunc(value){
