@@ -66,7 +66,7 @@ const ys = {
   'population_type':'人口类型',
   'relation_with_host':'与户主关系',
   // 暂时不用的数据
-  // 'birth_date':'出生日期',
+  'birth_date':'出生日期',
   // 'org_id':'组织关系',
   // 'unit_id':'所属单元',
   // 'is_insured':'是否参保',
@@ -167,7 +167,7 @@ const ys = {
   'edit_house_date': '编辑时间',
   'house_site': '房屋地址',
   'house_holder': '房主姓名',
-  'people_number': '居住人数',
+  // 'people_number': '居住人数',
   'holder_tel': '房主电话',
   'house_site2': '户籍地址'
 
